@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+
+<!-- Main container to store both owner and vehicle details -->
+<div class="flex flex-col p-4 space-y-4 items-center w-full">
+
+    <!-- Description and person image -->
+    <div class="card card-side bg-base-100 shadow-sm justify-center items-center w-2/3">
+        <figure class="w-32 h-32 rounded-full overflow-hidden ring-2 ring-primary ring-offset-2 flex-shrink-0 jus">
+            {% if vehicle.person_image %}
+                <img src="{{ vehicle.person_image.url }}" alt="Owner Image" class="w-full h-full object-cover">
+            {% else %}
+                <img src="/media/person_images/default.jpg" alt="Default owner image" class="w-full h-full object-cover">
+            {% endif %}
+        </figure>
+
+        <div class="card-body ml-4 w-full ">
+            <h2 class="card-title">{{ vehicle.name }}</h2>
+
+            <!-- Scrollable description -->
+            <div class="h-40 overflow-y-auto p-2 border rounded ">
+                <p>{{ vehicle.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vehicle details right below the description -->
+    <div class="card bg-base-100 shadow-sm border w-2/3 pb-8">
+        <div class="card-body">
+            <h2 class="card-title">Vehicle Details</h2>
+            <p><strong>Vehicle Type:</strong> {{ vehicle.vehicle_type }}</p>
+            <p><strong>Capacity:</strong> {{ vehicle.capacity }} seats</p>
+            <p><strong>Price per Day:</strong> ${{ vehicle.price_per_day }}</p>
+            
+            {% if vehicle.car_image %}
+                <img src="{{ vehicle.car_image.url }}" alt="{{ vehicle.vehicle_type }}" class="w-full h-full object-cover rounded mb-4">
+            {% else %}
+                <img src="{% static 'Sawari_app/images/default_vehicle.jpg' %}" alt="{{ vehicle.vehicle_type }}" class="w-full h-full object-cover rounded mb-4">
+            {% endif %}
+        </div>
+        <!-- Button at bottom right -->
+        <div class="absolute bottom-4 right-6">
+            <button class="btn btn-primary">Interested</button>
+        </div>
+        
+    </div>
+
+</div>
+{% endblock %}

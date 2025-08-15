@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+<form  method="post" enctype="multipart/form-data" action="{% url 'vehicle_listing' %}" class="justify-center items-center flex flex-col gap-4 p-4">
+    {% csrf_token %}
+    <h1 class="font-bold text-4xl"><legend>LIST YOUR VEHICLE IN SAWARI </legend></h1>
+   
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+    <legend class="fieldset-legend">Registration</legend>
+
+    <label class="label">Owner Name</label>
+    <input type="text" class="input" placeholder="asdf" name="name" />
+
+    <label class="label">Owner Image</label>
+    <input type="file" class="input" placeholder="Upload Your Image" name="person_image" />
+
+    <label class="label">Vehicle Type</label>
+    <input type="text" class="input" placeholder="Vehicle Type" name="vehicle_type"/>
+    
+    <label class="label">Capacity</label>
+    <input type="number" class="input" placeholder="Enter Capacity" name="capacity" />
+    
+    <label class="label">Cost Per Day</label>
+    <input type="number" class="input" placeholder="Enter Cost Per Day" name="price_per_day" />
+    
+    <label class="label">Vehicle Image</label>
+    <input type="file" class="input" placeholder="Upload Vehicle Image" name="car_image" />
+
+    <label class="label">Description</label>
+    <textarea class="textarea" placeholder="Enter Description" name="description"></textarea>
+
+
+
+    <button type="submit" class="btn btn-primary mt-4">Submit</button>
+    
+</fieldset>
+</form>
+{% endblock %}

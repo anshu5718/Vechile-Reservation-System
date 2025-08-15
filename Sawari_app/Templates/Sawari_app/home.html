@@ -1,36 +1,55 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
+<!-- registration button for vechile -->
+<button class="
+  relative 
+  btn btn-primary
+  text-white
+  px-4 py-2 rounded
+  hover:bg-blue-600">
+  <a href="{% url 'vehicle_listing' %}">List Vehicle</a>
+</button>
+<!-- body part -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 p-4">
   {% for vehicle in vehicles %}
-  <div class="border rounded-lg shadow p-4 flex flex-col items-center">
-    
-    
+  <div class="border rounded-lg shadow p-4 ">
+    <div class="flex flex-col items-center mb-4">
+          <!-- Vehicle Image -->
+      {% if vehicle.car_image %}
+        <img src="{{ vehicle.car_image.url }}" alt="{{ vehicle.vehicle_type }}" class="w-60 h-40 object-cover rounded mb-4">
+      {% else %}
+        <img src="{% static 'Sawari_app/images/default_vehicle.jpg' %}" alt="{{ vehicle.vehicle_type }}" class="w-60 h-40 object-cover rounded mb-4">
+      {% endif %}
+    </div>
 
-    <!-- Vehicle Image -->
-    {% if vehicle.car_image %}
-      <img src="{{ vehicle.car_image.url }}" alt="{{ vehicle.vehicle_type }}" class="w-60 h-40 object-cover rounded mb-4">
-    {% else %}
-      <img src="{% static 'Sawari_app/images/default_vehicle.jpg' %}" alt="{{ vehicle.vehicle_type }}" class="w-60 h-40 object-cover rounded mb-4">
-    {% endif %}
-
-    <div class="flex justify-center items-center mb-4 space-x-4">
-        <div>
+    <!-- Vehicle Details with image-->
+    <div class="flex justify-center items-center mb-4 space-x-4 p-4">
+        <div class="">
             <!-- Owner Image -->
                 {% if vehicle.person_image %}
                 <img src="{{ vehicle.person_image.url }}" alt="{{ vehicle.name }}" class="w-24 h-24 p-2 rounded-full mb-4">
+                {% else %}
+                <img src="/media/person_images/default.jpg" alt="Default owner image" class="w-24 h-24 p-2 rounded-full mb-4">
                 {% endif %}
         </div>
+        <!-- Vehicle detail only -->
         <div>
             <h2 class="font-bold text-lg">{{ vehicle.name }}</h2>
             <p>Vehicle: {{ vehicle.vehicle_type }}</p>
             <p>Seats: {{ vehicle.capacity }}</p>
-            <p>Price per day: ${{ vehicle.price_per_day }}</p>
+            <p>Price per day: Rs.{{ vehicle.price_per_day }}</p>
         </div>
+        
+        
+      
     </div>
-    
+    <button class="flex-1 ">
+      <a href="{% url 'vehicle_detail' vehicle.id %}" class="btn btn-outline btn-info text-white px-4 py-2 rounded hover:bg-blue-600">
+      View Details </a>
+    </button>
   </div>
+
   {% endfor %}
 </div>
 

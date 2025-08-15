@@ -22,6 +22,8 @@ from django.conf.urls.static import static
 urlpatterns = [
  
     path('',views.home, name='home'),  # Home page URL
+    path('vehicle_listing/', views.vehicle_listing, name='vehicle_listing'),  # Vehicle listing page URL
+    path('vehicle_detail/<int:vehicle_id>/', views.vehicle_detail, name='vehicle_detail'),  # Vehicle detail page URL
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
