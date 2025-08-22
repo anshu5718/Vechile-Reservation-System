@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block navbar %}
+<!-- Empty to exclude navbar -->
+{% endblock %}
+{% block about_us%}
+    <h1 class="text-8xl text-center font-extrabold text-white text-rounded mt-8 mb-4">Sawari</h1>
+    <h1 class="text-white flex justify-center">The Smarter Way to Move</h1>
+    <div class="flex items-center justify-center p-4  m-4">
+        <div class="card bg-gray-100 w-96 shadow-sm m-4">
+            <div class="card-body">
+                <h2 class="card-title">About Sawari:</h2>
+                <p>Sawari was founded on the belief that getting from A to B should be effortless, whether you're behind the wheel or in the back seat.
+                        For our valued riders, we provide a reliable, convenient, and safe way to book a ride. With a few taps, you can access a network of verified vehicles and drivers, ensuring you reach your destination comfortably and on time.
+                        For our partner owners and drivers, we offer a powerful platform to monetize your vehicle. Generate income, build your clientele, and manage your bookings with our intuitive tools, all while providing a valuable service to your community.
+                </p>
+                <div class="card-actions justify-end">
+                   <a href="{% url 'login_view' %}"><button class="btn btn-primary">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock about_us %}
