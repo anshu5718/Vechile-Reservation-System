@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'owner_acc',
+    'background_task',
 ]
 
 MIDDLEWARE = [

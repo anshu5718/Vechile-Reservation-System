@@ -1,3 +1,5 @@
+from .background_task import send_otp
+
 def is_email_valid(email):
 	if email == '' or email is None or '@' not in email:
 		return True
@@ -6,10 +8,12 @@ def is_email_valid(email):
 
 
 def forgot_password_email(email):
-	from django.core.mail import send_mail
-	from django.conf import settings
+	
 	from .models import OTP
-	subject = 'Password Reset Request'
-	message = f'Use {OTP.otp_generator(email)} to reset your password.'
-	send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+	
+	try:
+		new_otp = OTP.otp_generator(email)
+	except Exception as e:
+		raise Exception(str(e))
+	send_otp(email, new_otp.otp)
 	

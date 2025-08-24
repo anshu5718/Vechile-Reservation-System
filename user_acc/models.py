@@ -29,12 +29,16 @@ class OTP(models.Model):
         if user is None:
             raise Exception("User doesn’t exist")
         
+        for _ in range(3):
+            otp = "".join([str(random.randint(0, 9)) for _ in range(length)])
+            if not OTP.objects.filter(otp=otp).exists():
+                break
+        
         # Delete old OTPs
         OTP.objects.filter(user=user).delete()
 
-        new_otp = "".join([str(random.randint(0, 9)) for _ in range(length)])
-        otp_instance = OTP(user=user, otp=new_otp)
-        otp_instance.save()
+        new_otp = OTP(user=user, otp=otp)
+        new_otp.save()
         return new_otp
 
     def is_expired(self):

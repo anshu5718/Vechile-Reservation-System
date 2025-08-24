@@ -52,6 +52,7 @@ def forgot_password_view(request):
         except Exception as e:
             messages.error(request, str(e))
             return render(request, 'user_acc/forgot_password.html', {'error': str(e)})
+        messages.success(request, 'OTP sent successfully')
         return redirect('otp_confirmation')
     return render(request, 'user_acc/forgot_password.html', {'message': 'Forgot Password functionality is not implemented yet.'})
 
