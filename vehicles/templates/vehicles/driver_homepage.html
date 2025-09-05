@@ -2,8 +2,10 @@
 {% load static %}
 
 {% block content %}
-
-<h2 class="text-2xl font-bold mb-4 text-white m-4">Available Vehicles</h2>
+<h2 class="text-2xl font-bold mb-4 text-white m-4">Registered Vehicles</h2>
+<a href="{% url 'vehicles:register_vehicle' %}" class="btn btn-primary mb-4 text-white m-4"> 
+    Add Vehicle
+</a>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-white">
     {% for vehicle in vehicles %}
@@ -22,3 +24,4 @@
     {% endfor %}
 </div>
 {% endblock %}
+

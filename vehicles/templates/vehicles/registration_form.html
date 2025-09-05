@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <form action= "{% url 'vehicles:register_vehicle' %}"method="post" class="flex flex-col items-center justify-center text-white" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h1 class="text-2xl font-semibold m-4">Register a Vehicle</h1>
+
+        <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 m-4 ">
+
+            <label class="label">Name</label>
+            <input type="text" class="input" placeholder="eg: asdf" name="name" required />
+
+            <label class="label">Vehicle Type</label>
+            <select name="vehicle_type" id="vehicle_type" class="input">
+                <option value="car">Car</option>
+                <option value="van">Van</option>
+                <option value="bus">Bus</option>
+                <option value="truck">Truck</option>
+            </select>
+
+            <label class="label">Capacity</label>
+            <input type="number" class="input" placeholder="eg: 4" name="capacity" required />
+            
+            <label class="label">Registration Number</label>
+            <input id="registration_number" class="input" name="registration_number" type="text" maxlength="50" required class="mt-1 w-full rounded-lg border px-3 py-2" placeholder="e.g., BA 2 KHA 1234" />
+
+            <label for="description" class="block text-sm font-medium">Description (optional)</label>
+            <textarea id="description" class="input" name="description" placeholder="Notes about condition, AC, luggage space, etc."></textarea>
+
+
+    
+            <label for="citizenship_number" class="block text-sm font-medium">Citizenship Number</label>
+            <input id="citizenship_number" class="input" name="citizenship_number" type="text" maxlength="50" required />
+
+
+
+            <label for="license_number" class="block text-sm font-medium">License Number</label>
+            <input id="license_number" class="input" name="license_number" type="text" maxlength="50" required/>
+
+            <label for="vehicle_image" class="block text-sm font-medium">Vehicle Image</label>
+            <input type="file" id="vehicle_image" name="vehicle_image" required></label>
+            
+
+            <a href="{% url 'vehicles:driver_homepage' %}" class="btn btn-primary">Submit</a>
+        </fieldset>
+    </form>
+
+{% endblock content %}

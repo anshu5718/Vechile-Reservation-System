@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'user_acc',
     'tailwind',
     'theme',
-    'owner_acc',
     'background_task',
+    'vehicles',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +144,10 @@ EMAIL_USE_TLS = False # MailHog doesn't use TLS by default
 EMAIL_HOST_USER = '' # No authentication needed for MailHog
 EMAIL_HOST_PASSWORD = '' # No password required
 DEFAULT_FROM_EMAIL = 'webmaster@localhost' # Default sender email
+
+MAX_ATTEMPTS = 3
+
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

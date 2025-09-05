@@ -5,22 +5,34 @@ from django.contrib import messages
 from .models import OTP, User_profile
 from .utilis import is_email_valid, forgot_password_email
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+from vehicles.models import Vehicle
 def first_view(request):
     return render(request,'user_acc/first.html')
 
 def login_view(request):
-    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request,username=username, password=password)
+        user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
-            return redirect('viewer_homepage')
+            # Redirect based on user type
+            if user.user_type == "customer":
+                return redirect("viewer_homepage")
+            elif user.user_type == "driver":
+                return redirect("vehicles:driver_homepage")
+            else:
+                messages.error(request, "Unauthorized user type.")
+                return redirect("login_view")
         else:
+            messages.error(request, "Invalid credentials")
             return render(request, 'user_acc/login.html', {'error': 'Invalid credentials'})
-    return render(request, 'user_acc/login.html')
+    
+    # Handle GET requests
+    return render(request, 'user_acc/login.html')  # <--- was missing
 
 
 def signup_view(request):
@@ -31,6 +43,7 @@ def signup_view(request):
             return redirect('login_view')
     else:
         form = signupForm()
+        messages.error (request, 'Please correct the error below.')
     return render(request, 'user_acc/signup.html', {'form': form})
 
 
@@ -75,12 +88,7 @@ def set_new_password_view(request, user_id= None):
         if password1 != password2:
             messages.error(request, 'Passwords do not match')
             return redirect('set_new_password')
-        try:
-            validate_password(password1)
-        except Exception as e:
-            for error in list(e):
-                 messages.error(request, str(error))
-            return render(request, 'user_acc/set_new_password.html', {'error': str(e)})
+       
         else:
             if user_id is not None:
                 user= User_profile.objects.get(id=user_id)
@@ -96,9 +104,15 @@ def set_new_password_view(request, user_id= None):
         #     return render(request, 'user_acc/set_new_password.html', {'error': 'Passwords do not match'})
     return render(request, 'user_acc/set_new_password.html', {'message': 'Set New Password functionality is not implemented yet.'})
     
-
+@login_required
 def viewer_homepage(request):
-    if request.user.is_authenticated:
-        return render(request, 'user_acc/viewer_homepage.html', {'username': request.user.username})
-    else:
-        return render(request, 'user_acc/login.html', {'error': 'You need to log in first'})
+    if request.user.user_type != "customer":
+        messages.error(request, "Only customers can access this page.")
+        return redirect("login_view")
+
+    vehicles = Vehicle.objects.filter(
+        
+        is_active=True,
+        kyc_approved=True
+    )
+    return render(request, 'user_acc/viewer_homepage.html', {'vehicles': vehicles})
