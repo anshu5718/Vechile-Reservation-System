@@ -22,7 +22,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('user_acc.urls')),  # Include URLs from user_acc app
-    path('vehicle/', include('vehicles.urls')),
+    path('vehicle/', include(('vehicles.urls', 'vehicles'), namespace='vehicles')),
+    path('reservation/', include('reservation.urls')),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

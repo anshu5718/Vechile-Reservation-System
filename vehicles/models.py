@@ -11,6 +11,8 @@ class Vehicle(models.Model):
     description = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=False)  # Active only after admin approval
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='vehicles')
+    qr_image = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
+    cost_per_day = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     # KYC fields
     citizenship_number = models.CharField(max_length=50)
@@ -19,5 +21,15 @@ class Vehicle(models.Model):
     kyc_approved = models.BooleanField(default=False)
     kyc_approved_at = models.DateTimeField(blank=True, null=True)
 
+    @property
+    def current_status(self):
+        active_reservation = self.reservations.filter(status__in=['pending', 'approved']).order_by('-created_at').first()
+        if active_reservation:
+            return active_reservation.status
+        return "available"
+
+
+
     def __str__(self):
+        
         return self.name

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flex justify-center items-center min-h-screen bg-base-200">
+    <div class="w-full max-w-md p-6 bg-base-100 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold text-center mb-6">Payment</h2>
+        
+        <!-- QR Code Section -->
+        <div class="flex justify-center mb-6">
+            <p class=""></p>
+            {% if reservation.vehicle.qr_image %}
+                <div class="flex justify-center mb-6">
+                    <img src="{{ reservation.vehicle.qr_image.url }}" alt="QR Code Pay" class="w-48 h-48 object-contain">
+                </div>
+            {% else %}
+                <p class="text-center text-gray-500">QR code not available.</p>
+            {% endif %}
+
+        </div>
+        <span style =" color: rgb(255, 0, 0);">You need to submit the screenshot of your payment as proof</span><br>
+        <span>Amount per day: $ {{ reservation.vehicle.cost_per_day }}</span>
+        <form method="POST" enctype="multipart/form-data" class="mt-4">
+            {% csrf_token %}
+            <label class="block mb-1">Upload Payment Proof</label>
+            <input type="file" name="payment_proof" accept="image/*" required
+                class="w-full border rounded-lg p-2 mb-4">
+            <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                Submit
+            </button>
+        </form>
+
+
+    </div>
+</div>
+{% endblock %}

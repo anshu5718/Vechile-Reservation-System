@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'theme',
     'background_task',
     'vehicles',
+    'reservation',
 ]
 
 MIDDLEWARE = [
@@ -136,14 +137,14 @@ AUTH_USER_MODEL = 'user_acc.User_profile'
 
 
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-EMAIL_HOST = 'localhost' # MailHog's SMTP server is usually hosted on localhost
-EMAIL_PORT = 1025 # MailHog's default SMTP port
-EMAIL_USE_TLS = False # MailHog doesn't use TLS by default
-EMAIL_HOST_USER = '' # No authentication needed for MailHog
-EMAIL_HOST_PASSWORD = '' # No password required
-DEFAULT_FROM_EMAIL = 'webmaster@localhost' # Default sender email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com' # MailHog's SMTP server is usually hosted on localhost
+EMAIL_PORT = 587 # MailHog's default SMTP port
+EMAIL_USE_TLS = True # MailHog doesn't use TLS by default
+EMAIL_HOST_USER = 'shrestha.bisaka18@gmail.com' # No authentication needed for MailHog
+EMAIL_HOST_PASSWORD = 'xixq jmwk zndt hnis' # No password required
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER # Default sender email
 
 MAX_ATTEMPTS = 3
 
@@ -151,3 +152,17 @@ MAX_ATTEMPTS = 3
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+
+STATIC_URL = '/static/'
+
+# During development
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# For production collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+
+LOGIN_URL = '/login/' 

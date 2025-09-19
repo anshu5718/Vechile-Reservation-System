@@ -2,25 +2,53 @@
 {% load static %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-4 text-white m-4">Registered Vehicles</h2>
-<a href="{% url 'vehicles:register_vehicle' %}" class="btn btn-primary mb-4 text-white m-4"> 
-    Add Vehicle
-</a>
+<h2 class="text-4xl font-bold mb-4 text-white m-4 flex justify-center">Registered Vehicles</h2>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-white">
     {% for vehicle in vehicles %}
-        <div class="border rounded-lg p-4 shadow-lg">
+        <div class="border rounded-lg p-4 shadow-lg flex flex-col h-full">
             {% if vehicle.vehicle_image %}
                 <img src="{{ vehicle.vehicle_image.url }}" alt="{{ vehicle.name }}" class="w-full h-48 object-cover rounded">
             {% else %}
-                <p>No image available</p>
+                <div class="w-full h-48 bg-gray-700 flex items-center justify-center rounded">
+                    <p class="text-gray-400">No image available</p>
+                </div>
             {% endif %}
-            <h3 class="text-xl font-semibold mt-2">{{ vehicle.name }}</h3>
-            <p class="text-gray-700 mt-1">{{ vehicle.description }}</p>
-            <p class="mt-1 text-sm text-gray-500">Type: {{ vehicle.vehicle_type }} | Capacity: {{ vehicle.capacity }}</p>
+
+            <div class="flex-grow mt-3">
+                <h3 class="text-xl font-semibold">{{ vehicle.name }}</h3>
+                <p class="text-gray-300 mt-1">{{ vehicle.description }}</p>
+                <p class="mt-2 text-sm text-gray-400">Type: {{ vehicle.vehicle_type }} | Capacity: {{ vehicle.capacity }}</p>
+            </div>
+            
+            <div class="mt-4 flex justify-start">
+                <div class="mt-4 flex justify-start">
+                    {% with vehicle.reservations.last as latest_reservation %}
+                        {% if latest_reservation %}
+                            {% if latest_reservation.status == 'cancelled' %} 
+                                <a href="{% url 'reservation:booking_status' latest_reservation.id %}" 
+                                    class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">{{ latest_reservation.status|title }} 
+                                </a>
+                            {% elif latest_reservation.status == 'approved' or latest_reservation.status == 'completed' or latest_reservation.status == 'pending' %}
+                                <a href="{% url 'reservation:booking_status' latest_reservation.id %}" 
+                                    class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">{{ latest_reservation.status|title }} 
+                                </a>
+
+                            {% endif %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+            </div>
         </div>
-        {% empty %}
-            <p>No vehicles available.</p>
+
+
+
+
+    {% empty %}
+        <div class="col-span-full text-center py-8">
+            <p class="text-gray-400 text-lg">No vehicles available at the moment.</p>
+        </div>
     {% endfor %}
 </div>
 {% endblock %}

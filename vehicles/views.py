@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import VehicleRegistrationForm
 from .models import Vehicle
+from reservation.models import Reservation
 from django.contrib import messages
 from user_acc.models import User_profile
 from django.contrib.auth.decorators import login_required
@@ -13,10 +14,10 @@ def register_vehicle(request):
                 vehicle = form.save(commit=False)
                 vehicle.owner = request.user   # link vehicle to the logged-in driver
                 vehicle.save()
-                return redirect('viewer_homepage')
+                return redirect('vehicles:driver_homepage')
             else:
                 return render(request, 'vehicles/registration_form.html', {
-                    'form': form,
+                    'form': form,   
                     'error': 'Only drivers and admins can register vehicles.'
                 })
     else:
@@ -29,16 +30,16 @@ def register_vehicle(request):
 def driver_homepage(request):
     if request.user.user_type != "driver":
         messages.error(request, "Only drivers can access this page.")
-        return redirect("login_view")
+        return redirect("/login/")  # your login URL
 
     vehicles = Vehicle.objects.filter(
         owner=request.user,
         is_active=True,
-        kyc_approved=True
-    )
-    return render(request, 'vehicles/driver_homepage.html', {'vehicles': vehicles})
+        kyc_approved=True,
+    ).prefetch_related('reservations')  # still good to prefetch
 
-    
+    context = {"vehicles": vehicles}
+    return render(request, 'vehicles/driver_homepage.html', context)
 
 
 

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="card card-border bg-base-100 w-96 ">
+        <div class="card-body flex justify-center">
+            <h2 class="card-title" style="color: red; font-weight: bold; font-size: 24px">Cancel Booking</h2>
+
+            <form action="{% url 'booking_cancel' reservation.id %}" method="post" >
+                {% csrf_token %}
+                <p class="text-white">Are you sure you want to cancel this booking?</p><br>
+
+                <img src="{{ reservation.vehicle.vehicle_image.url }}" alt="" class=" rounded "><br>
+                <span class="text-white">Owner: {{ reservation.vehicle.name }}</span><br>
+                <span class="text-white">Vehicle Type: {{ reservation.vehicle.vehicle_type }}</span><br>
+                <span class="text-white">Date: {{ reservation.start_date }} to {{ reservation.end_date }}</span><br>
+                <span class="text-white">Status: <span style="color: rgb(249, 251, 250); font-weight: bold;">{{ reservation.vehicle.current_status }}</span></span><br><br>
+                <button type="submit" class="btn bg-red-600 hover:bg-red-700 p-1 mt-4 text-white rounded font-semibold card-justify-end">
+                    Cancel Booking
+                </button>
+                
+            </form>
+        </div>
+    </div>
+{% endblock %}

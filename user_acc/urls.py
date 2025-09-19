@@ -11,5 +11,6 @@ urlpatterns = [
     path('otp_confirmation/', views.otp_confirmation_view, name='otp_confirmation'),  # Placeholder for OTP confirmation view
     path('set_new_password/<int:user_id>/',
           views.set_new_password_view, name='set_new_password'),  # Placeholder for setting new password view
+    path('booking_cancel/<int:reservation_id>/', views.booking_cancel, name='booking_cancel'),  # New path for booking cancellation
     
 ]

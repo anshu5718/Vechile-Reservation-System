@@ -13,4 +13,6 @@ class VehicleRegistrationForm(forms.ModelForm):
             'citizenship_number',
             'license_number',
             'vehicle_image',
+            'qr_image',
+            'cost_per_day',
         ]

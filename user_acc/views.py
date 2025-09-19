@@ -6,8 +6,11 @@ from .models import OTP, User_profile
 from .utilis import is_email_valid, forgot_password_email
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
-# Create your views here.
+from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail, EmailMessage
+from django.conf import settings
 from vehicles.models import Vehicle
+from reservation.models import Reservation
 def first_view(request):
     return render(request,'user_acc/first.html')
 
@@ -61,7 +64,7 @@ def forgot_password_view(request):
             messages.error (request, 'Enter a valid email address to reset your password')
             return redirect('forgot_password')
         try:
-             forgot_password_email(email)
+            forgot_password_email(email)
         except Exception as e:
             messages.error(request, str(e))
             return render(request, 'user_acc/forgot_password.html', {'error': str(e)})
@@ -110,9 +113,51 @@ def viewer_homepage(request):
         messages.error(request, "Only customers can access this page.")
         return redirect("login_view")
 
-    vehicles = Vehicle.objects.filter(
-        
-        is_active=True,
-        kyc_approved=True
+    vehicles = Vehicle.objects.filter(is_active=True, kyc_approved=True)
+    reservations= Reservation.objects.filter(user=request.user)
+
+    return render(
+        request,
+        'user_acc/viewer_homepage.html',
+        {
+            'vehicles': vehicles,
+            'reservations': reservations,
+        }
     )
-    return render(request, 'user_acc/viewer_homepage.html', {'vehicles': vehicles})
+
+
+@login_required
+def booking_cancel(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+
+    if request.method == 'POST':
+        if reservation.can_user_cancel() and reservation.status in ['pending', 'approved']:
+            reservation.status = "cancelled"
+            reservation.save()
+
+            # Notify user
+            send_mail(
+                subject='Booking Cancelled',
+                message=f'Your booking for {reservation.vehicle} has been cancelled successfully.',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[reservation.user.email],
+            )
+
+            # Notify owner
+            send_mail(
+                subject='Booking Cancelled by User',
+                message=f'The booking for your vehicle {reservation.vehicle} has been cancelled by the user.',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[reservation.vehicle.owner.email],
+            )
+
+            messages.success(request, 'Booking cancelled successfully.')
+        else:
+            messages.error(request, 'You cannot cancel this booking anymore.')
+
+        return redirect('viewer_homepage')
+
+    # If GET request, render confirmation page
+    return render(request, 'user_acc/booking_cancel.html', {"reservation": reservation})
+
+

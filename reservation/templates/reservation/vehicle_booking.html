@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h2 class="text-5xl font-bold mb-4 w-full decoration-[#4169e1]">
+        Book {{ vehicle.vehicle_type }}
+    </h2>
+
+
+  <form method="post" class="space-y-4 ">
+    {% csrf_token %}
+    
+    {% for field in form %}
+        <div class="mb-4 text-white flex flex-col m-4">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium mb-1">{{ field.label }}</label>
+            <div >{{ field }}</div>
+            {% if field.help_text %}
+                <p class="text-xs text-gray-400">{{ field.help_text }}</p>
+            {% endif %}
+            {% for error in field.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    
+    <button type="submit" class="btn btn-primary bg-blue-500 text-white px-4 py-2 rounded">
+      Submit Reservation
+    </button>
+  </form>
+{% endblock %}

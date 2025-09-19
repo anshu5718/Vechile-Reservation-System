@@ -4,7 +4,7 @@
 {% block content %}
     <form action= "{% url 'vehicles:register_vehicle' %}"method="post" class="flex flex-col items-center justify-center text-white" enctype="multipart/form-data">
         {% csrf_token %}
-        <h1 class="text-2xl font-semibold m-4">Register a Vehicle</h1>
+        <h1 class="text-5xl font-semibold m-4">Register a Vehicle</h1>
 
         <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4 m-4 ">
 
@@ -39,10 +39,16 @@
             <input id="license_number" class="input" name="license_number" type="text" maxlength="50" required/>
 
             <label for="vehicle_image" class="block text-sm font-medium">Vehicle Image</label>
-            <input type="file" id="vehicle_image" name="vehicle_image" required></label>
+            <input type="file" id="vehicle_image" name="vehicle_image" class="input p-2" required></label>
+
+            <label for="qr_image" class="block text-sm font-medium">QR to receive the money</label>
+            <input type="file" id="qr_image" name="qr_image"  class="input p-2" required></label>
+
+            <label for="cost_per_day" class="block text-sm font-medium">Cost per day</label>
+            <input id="cost_per_day" class="input" name="cost_per_day" type="text" maxlength="50" required/>
             
 
-            <a href="{% url 'vehicles:driver_homepage' %}" class="btn btn-primary">Submit</a>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </fieldset>
     </form>
 

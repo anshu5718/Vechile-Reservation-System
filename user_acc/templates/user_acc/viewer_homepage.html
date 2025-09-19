@@ -1,24 +1,64 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
 {% load static %}
+{% block content %} 
+<h2 class="text-2xl font-bold mb-4 text-white m-4">Available Vehicles</h2> 
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-white"> 
+    {% for vehicle in vehicles %} 
+        <div class="border rounded-lg p-4 shadow-lg flex flex-col h-full"> 
+            {% if vehicle.vehicle_image %} 
+                <img src="{{ vehicle.vehicle_image.url }}" alt="{{ vehicle.name }}" class="w-full h-48 object-cover rounded"> 
+            {% else %} 
+                <div class="w-full h-48 bg-gray-700 flex items-center justify-center rounded"> 
+                    <p class="text-gray-400">No image available</p> 
+                </div> 
+            {% endif %} 
 
-{% block content %}
+            <div class="flex-grow mt-3">
+                <h3 class="text-xl font-semibold">{{ vehicle.name }}</h3> 
+                <p class="text-gray-300 mt-1">{{ vehicle.description }}</p> 
+                <p class="mt-2 text-sm text-gray-400">Type: {{ vehicle.vehicle_type }} | Capacity: {{ vehicle.capacity }}</p> 
+            </div> 
 
-<h2 class="text-2xl font-bold mb-4 text-white m-4">Available Vehicles</h2>
+            <div class="mt-4 flex justify-start space-x-2">
+                {% if vehicle.current_status == 'available' %}
+                    <a href="{% url 'reservation:vehicle_booking' vehicle.id %}" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                        Book Now
+                    </a>
+                {% elif vehicle.current_status in 'approved completed pending' %}
+                    <span class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                        Booked
+                    </span>
+                {% else %}
+                    <span class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                        Unavailable
+                    </span>
+                {% endif %}
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-white">
-    {% for vehicle in vehicles %}
-        <div class="border rounded-lg p-4 shadow-lg">
-            {% if vehicle.vehicle_image %}
-                <img src="{{ vehicle.vehicle_image.url }}" alt="{{ vehicle.name }}" class="w-full h-48 object-cover rounded">
-            {% else %}
-                <p>No image available</p>
-            {% endif %}
-            <h3 class="text-xl font-semibold mt-2">{{ vehicle.name }}</h3>
-            <p class="text-gray-700 mt-1">{{ vehicle.description }}</p>
-            <p class="mt-1 text-sm text-gray-500">Type: {{ vehicle.vehicle_type }} | Capacity: {{ vehicle.capacity }}</p>
-        </div>
-        {% empty %}
-            <p>No vehicles available.</p>
-    {% endfor %}
-</div>
+                {% for reservation in reservations %}
+                    {% if vehicle.current_status == 'pending' or vehicle.current_status == 'approved' or vehicle.current_status == 'completed' %}
+                        <a href="{% url 'booking_cancel' reservation.id %}" 
+                        class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 ml-4">
+                            Cancel
+                        </a>
+                        {% if vehicle.current_status == 'approved' %}
+                            <a href="{% url 'reservation:payment' reservation.id %}" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 ml-4">
+                                Pay Now
+                            </a>
+                        {% endif %}
+                        
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+
+            
+        </div> 
+    {% empty %} 
+        <div class="col-span-full text-center py-8"> 
+            <p class="text-gray-400 text-lg">No vehicles available at the moment.</p> 
+        </div> 
+    {% endfor %} 
+</div> 
 {% endblock %}
