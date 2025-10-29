@@ -1,5 +1,40 @@
 {% extends 'base.html' %} 
 {% load static %}
+{% block navbar %}
+        <div class="navbar bg-base-100 shadow-sm h-14">
+            <!-- Brand / Logo -->
+            <div class="flex-1">
+                <a href="{% url 'viewer_homepage' %}" class="btn from-blue-500 to-purple-600 text-white font-bold text-xl rounded-xl shadow-md hover:scale-105 transform transition">
+                    <img src="{% static 'img/sawari_white.png' %}" alt="Sawari Logo" class="h-20 w-auto">
+                </a>
+            </div>
+            <div class="flex-none gap-2 mr-4">
+                <a href="{% url 'reservation:user_booking' %}" class="btn btn-soft btn-info btn-m rounded-btn font-semibold">
+                    My Bookings
+                </a>
+            </div>
+
+            <!-- Three-dot dropdown -->
+            <div class="flex-none">
+                <div class="dropdown dropdown-end">
+                    <button tabindex="0" class="btn btn-square btn-ghost">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-5 w-5 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                        </svg>
+                    </button>
+                    <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+                        {% if request.user.user_type == 'driver' or request.user.user_type == 'admin' %}
+                            <li><a href="{% url 'vehicles:register_vehicle' %}">List Vehicle</a></li>{% endif %}
+                        <li><a href="{% url 'login_view' %}">Login</a></li>
+                        <li><a href="{% url 'first_view' %}">Logout</a></li>
+                        
+                        
+                        <!-- Add more menu items if needed -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endblock navbar %}
 {% block content %} 
 <h2 class="text-2xl font-bold mb-4 text-white m-4">Available Vehicles</h2> 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-white"> 
@@ -35,7 +70,7 @@
                     </span>
                 {% endif %}
 
-                {% for reservation in reservations %}
+                <!-- {% for reservation in reservations %}
                     {% if vehicle.current_status == 'pending' or vehicle.current_status == 'approved' or vehicle.current_status == 'completed' %}
                         <a href="{% url 'booking_cancel' reservation.id %}" 
                         class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 ml-4">
@@ -48,8 +83,8 @@
                             </a>
                         {% endif %}
                         
-                    {% endif %}
-                {% endfor %}
+                    {% endif %} -->
+                <!-- {% endfor %} -->
             </div>
 
 

@@ -22,7 +22,7 @@
             <option value="completed" {% if reservation.status == 'completed' %}selected{% endif %}>Completed</option>
             <option value="cancelled" {% if reservation.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
         </select>
-        <br>
+        
         <button type="submit" class="bg-blue-600 py-2 px-4 rounded-lg">Update Status</button>
         <a href="{% url 'reservation:reject_booking' reservation.id %}" class = 'btn bg-red-600 hover:bg-red-700 py-2 px-4 text-white rounded-lg'>Reject</a>
     </form>

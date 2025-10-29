@@ -8,4 +8,7 @@ urlpatterns = [
     path('booking_status/<int:reservation_id>/', views.booking_status, name='booking_status'),
     path('reject_booking/<int:reservation_id>/', views.reject_booking, name='reject_booking'),
     path('payment/<int:reservation_id>/', views.payment, name='payment'),
+    path('user_booking/', views.user_booking, name='user_booking'),
+    path ('driver_booking/', views.driver_booking, name='driver_booking'),
+    path('driver_booking/<int:reservation_id>/', views.driver_booking, name='driver_booking'),
 ]

@@ -16,10 +16,14 @@
                 <span class="text-white">Date: {{ reservation.start_date }} to {{ reservation.end_date }}</span><br>
                 <span class="text-white">Status: <span style="color: rgb(229, 232, 230); font-weight: bold;">{{ reservation.status }}</span></span>
                 <div class="card-actions justify-end">
-                    <button type="submit" class="btn bg-red-600 hover:bg-red-700 p-1 mt-4 text-white rounded font-semibold">
-                        <a href="{% url 'vehicles:driver_homepage' %}">Yes</a>
+                    <button type="submit"
+                            class="btn bg-red-600 hover:bg-red-700 p-1 mt-4 text-white rounded font-semibold">
+                        Yes
                     </button>
-                    <a href="{% url 'vehicles:driver_homepage' %}" class="btn bg-green-600 hover:bg-green-700 p-1 mt-4 text-white rounded font-semibold">
+
+
+
+                    <a href="{% url 'reservation:user_booking' %}" class="btn bg-green-600 hover:bg-green-700 p-1 mt-4 text-white rounded font-semibold">
                         No
                     </a>
                 </div>

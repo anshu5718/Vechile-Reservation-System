@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4 text-white m-4">Your Bookings</h2>
+    <table class="table-auto w-full border-collapse border border-gray-300 m-4 p-4 ">
+        {% csrf_token %}
+        <tr class="m-4 p-4 bg-gray-800 text-white text-center border-t border-gray-300">
+            <th>Reservation ID</th>
+            <th>Vehicle Type</th>
+            <th>Owner</th>
+            <th>Pickup Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+            <th>Payment</th>
+        </tr>
+        {% for reservation in reservations %}
+            <tr class="text-white text-center border-t border-gray-300">
+                <td>{{ reservation.id }}</td>
+                <td>{{ reservation.vehicle.vehicle_type }}</td>
+                <td>{{ reservation.vehicle.name }}</td>
+                <td>{{ reservation.start_date }}</td>
+                <td>{{ reservation.end_date }}</td>
+                <td>{{ reservation.status }}</td>
+                <td>{{reservation.payment_status}}</td>
+                <td>
+                    <a href="{% url 'reservation:reject_booking' reservation.id %} " class="btn btn-dash btn-error m-2">Reject</a> |
+                    <a href="{% url 'reservation:payment' reservation.id %}" class="btn btn-dash btn-success m-2">Payment</a>
+
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

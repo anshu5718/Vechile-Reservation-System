@@ -9,8 +9,7 @@ class Reservation(models.Model):
         ('available', 'Available'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-        ('cancelled', 'Cancelled'),
+        
     ]
 
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='reservations')
@@ -21,7 +20,8 @@ class Reservation(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
     created_at = models.DateTimeField(auto_now_add=True)
     payment_proof = models.ImageField(upload_to='payment_proofs/', null=True, blank=True)
-
+    payment_status = models.CharField(max_length=20 , default='Unpaid')
+    
     def can_user_cancel(self):
         """User can cancel if more than 2 days remain."""
         return timezone.now().date() <= self.start_date - timedelta(days=2)

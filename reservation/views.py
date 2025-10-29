@@ -115,9 +115,9 @@ def booking_status(request, reservation_id):
 @login_required
 def reject_booking(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
-    if request.method == "POST" and reservation.can_owner_cancel():
-        reservation.status = "cancelled"
-        reservation.save()
+    user = reservation.user
+    if request.method == "POST":
+        reservation.delete()
         send_mail(
             subject='Reservation Rejected',
             message=(
@@ -128,8 +128,11 @@ def reject_booking(request, reservation_id):
             recipient_list=[reservation.user.email],
         )
         messages.success(request, "Reservation has been rejected.")
-        return redirect('vehicles:driver_homepage')
-    return render(request, 'reservation/reject_booking.html', {'reservation': reservation})
+        return redirect('reservation:user_booking')
+    return render(request, 'reservation/reject_booking.html', 
+                  {'reservation': reservation,
+                     'user': user})
+                                                            
 
 @login_required
 def payment(request, reservation_id):
@@ -140,6 +143,7 @@ def payment(request, reservation_id):
     if request.method == 'POST':
         payment_proof = request.FILES.get('payment_proof')
         if payment_proof:
+            reservation.status = 'Paid'
             reservation.payment_proof = payment_proof
             reservation.save()
             messages.success(request, "Payment proof uploaded successfully. Awaiting approval.")
@@ -155,5 +159,28 @@ def payment(request, reservation_id):
             )
             return redirect('viewer_homepage')
         else:
+            reservation.status ='Unpaid'
             messages.error(request, "Please upload a valid payment proof.")
     return render(request, 'reservation/payment.html', {'reservation': reservation})
+
+
+def user_booking(request):
+    reservations = Reservation.objects.filter(user=request.user)
+    return render(request, 'reservation/user_booking.html', {'reservations': reservations})
+
+
+
+@login_required
+def driver_booking(request, reservation_id=None):
+    reservations = Reservation.objects.filter(vehicle__owner=request.user)
+
+    if request.method == 'POST' and reservation_id:
+        reservation = get_object_or_404(Reservation, id=reservation_id)
+        action = request.POST.get('action')
+        if action in ['available', 'pending', 'approved']:
+            reservation.status = action
+            reservation.save()
+            messages.success(request, f"Reservation {action} successfully.")
+        return redirect('reservation:driver_booking')
+
+    return render(request, 'reservation/driver_booking.html', {'reservations': reservations})
