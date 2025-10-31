@@ -4,9 +4,9 @@
 <div class="p-6 bg-gray-800 text-white rounded-lg shadow-lg">
     <h2 class="text-2xl font-bold mb-4">Reservation Details</h2>
 
-    <p><strong>User:</strong> {{ reservation.user.get_full_name }}</p>
+    <p><strong>User:</strong> {{ vehicle.name }}</p>
     <p><strong>Email:</strong> {{ reservation.user.email }}</p>
-    <p><strong>Vehicle:</strong> {{ vehicle.name }}</p>
+    <p><strong>Vehicle:</strong> {{ vehicle.vehicle_type}}</p>
     <p><strong>Start Date:</strong> {{ reservation.start_date }}</p>
     <p><strong>End Date:</strong> {{ reservation.end_date }}</p>
     <p><strong>Purpose:</strong> {{ reservation.purpose }}</p>
@@ -16,15 +16,11 @@
         {% csrf_token %}
         <label class="block mb-2"><strong>Update Status:</strong></label>
         <select name="action" class="bg-gray-700 text-white p-2 rounded-lg mb-4">
-            <option value="available" {% if reservation.status == 'available' %}selected{% endif %}>Available</option>
             <option value="pending" {% if reservation.status == 'pending' %}selected{% endif %}>Pending</option>
             <option value="approved" {% if reservation.status == 'approved' %}selected{% endif %}>Approved</option>
-            <option value="completed" {% if reservation.status == 'completed' %}selected{% endif %}>Completed</option>
-            <option value="cancelled" {% if reservation.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
         </select>
         
         <button type="submit" class="bg-blue-600 py-2 px-4 rounded-lg">Update Status</button>
-        <a href="{% url 'reservation:reject_booking' reservation.id %}" class = 'btn bg-red-600 hover:bg-red-700 py-2 px-4 text-white rounded-lg'>Reject</a>
     </form>
 </div>
 {% endblock %}

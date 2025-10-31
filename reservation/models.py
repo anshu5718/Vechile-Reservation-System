@@ -6,9 +6,10 @@ from vehicles.models import Vehicle
 
 class Reservation(models.Model):
     STATUS_CHOICES = [
-        ('available', 'Available'),
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
+        ('available', 'available'),
+        ('pending', 'pending'),
+        ('approved', 'approved'),
+        ('completed', 'completed'),
         
     ]
 

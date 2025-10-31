@@ -59,11 +59,7 @@
                 <div class="mt-4 flex justify-start">
                     {% with vehicle.reservations.last as latest_reservation %}
                         {% if latest_reservation %}
-                            {% if latest_reservation.status == 'cancelled' %} 
-                                <a href="{% url 'reservation:booking_status' latest_reservation.id %}" 
-                                    class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">{{ latest_reservation.status|title }} 
-                                </a>
-                            {% elif latest_reservation.status == 'approved' or latest_reservation.status == 'completed' or latest_reservation.status == 'pending' %}
+                            {% if latest_reservation.status == 'approved'  or latest_reservation.status == 'pending'  or latest_reservation.status == 'completed'%}
                                 <a href="{% url 'reservation:booking_status' latest_reservation.id %}" 
                                     class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">{{ latest_reservation.status|title }} 
                                 </a>

@@ -75,6 +75,8 @@ def booking_status(request, reservation_id):
                     f'Your reservation of {vehicle.vehicle_type} '
                     f'from {reservation.start_date} to {reservation.end_date} has been approved.\n\n'
                     f'Please pay the amount to complete the booking.'
+                    f'{reservation.vehicle.cost_per_day } per day'
+                    f' And upload the payment proof in the payment section.'
                 )
 
                 email = EmailMessage(
@@ -89,19 +91,7 @@ def booking_status(request, reservation_id):
                     email.attach_file(vehicle.qr_image.path)
 
                 email.send()
-            elif action == "completed":
-                subject = 'Reservation Completed'
-                body = (
-                    f'Your reservation of {vehicle.vehicle_type} '
-                    f'from {reservation.start_date} to {reservation.end_date} has been marked as completed.\n\n'
-                    f'Thank you for using our service!'
-                )
-                send_mail(
-                    subject=subject,
-                    message=body,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[reservation.user.email],
-                )
+        
             messages.success(request, f"Reservation status updated to {action}.")
             return redirect('vehicles:driver_homepage')  # redirect back to driver homepage
         
@@ -127,6 +117,15 @@ def reject_booking(request, reservation_id):
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[reservation.user.email],
         )
+        send_mail(
+            subject='Reservation Rejected',
+            message=(
+                f'Your reservation of {reservation.vehicle.vehicle_type} '
+                f'from {reservation.start_date} to {reservation.end_date} has been rejected.'
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[reservation.vehicle.owner.email],
+        )
         messages.success(request, "Reservation has been rejected.")
         return redirect('reservation:user_booking')
     return render(request, 'reservation/reject_booking.html', 
@@ -137,31 +136,44 @@ def reject_booking(request, reservation_id):
 @login_required
 def payment(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id)
+    vehicle = reservation.vehicle
     if reservation.user != request.user:
         messages.error(request, "You are not authorized to view this payment page.")
         return redirect('viewer_homepage')
     if request.method == 'POST':
         payment_proof = request.FILES.get('payment_proof')
         if payment_proof:
-            reservation.status = 'Paid'
+
+            reservation.payment_status = 'Paid'
             reservation.payment_proof = payment_proof
             reservation.save()
-            messages.success(request, "Payment proof uploaded successfully. Awaiting approval.")
-            send_mail(
-                subject='Payment is completed',
-                message=(
+            
+            messages.success(request, "Payment proof uploaded successfully..")
+            subject = 'Payment completed'
+            body = (
                     f'Payment is done for your reservation of {reservation.vehicle.vehicle_type} '
                     f'from {reservation.start_date} to {reservation.end_date} has been submitted.'
-                    f'Please change the status to completed after verification.'
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[reservation.vehicle.owner.email],
-            )
+                    f'Please verify the payment proof to complete the booking. ANd update the status to completed.'
+                )
+
+            email = EmailMessage(
+                    subject=subject,
+                    body=body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[reservation.vehicle.owner.email],
+                )
+
+                # Attach QR code if it exists
+            if reservation.payment_proof and reservation.payment_proof.path:
+                    email.attach_file(reservation.payment_proof.path)
+
+            email.send()
+        
             return redirect('viewer_homepage')
         else:
-            reservation.status ='Unpaid'
+            reservation.payment_status ='Unpaid'
             messages.error(request, "Please upload a valid payment proof.")
-    return render(request, 'reservation/payment.html', {'reservation': reservation})
+    return render(request, 'reservation/payment.html', {'reservation': reservation, 'vehicle': vehicle})
 
 
 def user_booking(request):
@@ -172,15 +184,56 @@ def user_booking(request):
 
 @login_required
 def driver_booking(request, reservation_id=None):
+    # Get all reservations for vehicles owned by the logged-in user
     reservations = Reservation.objects.filter(vehicle__owner=request.user)
 
+    # Handle POST actions
     if request.method == 'POST' and reservation_id:
+        # Get the specific reservation being updated
         reservation = get_object_or_404(Reservation, id=reservation_id)
+        vehicle = reservation.vehicle  # always refer to the vehicle of this reservation
         action = request.POST.get('action')
-        if action in ['available', 'pending', 'approved']:
+
+        if action in ['available', 'pending', 'approved', 'completed']:
             reservation.status = action
             reservation.save()
-            messages.success(request, f"Reservation {action} successfully.")
+
+            if action == "approved":
+                total_cost = vehicle.cost_per_day * (reservation.end_date - reservation.start_date).days
+                subject = 'Reservation Approved'
+                body = (
+                    f'Your reservation of {vehicle.vehicle_type} '
+                    f'from {reservation.start_date} to {reservation.end_date} has been approved.\n\n'
+                    f'Please pay the amount of Rs. {total_cost} to complete the booking.'
+                )
+                email = EmailMessage(
+                    subject=subject,
+                    body=body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[reservation.user.email],
+                )
+                if vehicle.qr_image and vehicle.qr_image.path:
+                    email.attach_file(vehicle.qr_image.path)
+                email.send()
+
+            elif action == "completed":
+                subject = 'Reservation Completed'
+                body = (
+                    f'Your reservation of {vehicle.vehicle_type} '
+                    f'from {reservation.start_date} to {reservation.end_date} has been marked as completed.\n\n'
+                    f'Thank you for using our service!'
+                )
+                send_mail(
+                    subject=subject,
+                    message=body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[reservation.user.email],
+                )
+
+            messages.success(request, f"Reservation marked as {action} successfully.")
         return redirect('reservation:driver_booking')
 
-    return render(request, 'reservation/driver_booking.html', {'reservations': reservations})
+    # Render template with all reservations
+    return render(request, 'reservation/driver_booking.html', {
+        'reservations': reservations,
+    })

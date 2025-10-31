@@ -26,6 +26,7 @@
                         <option value="available" {% if reservation.status == 'available' %}selected{% endif %}>Available</option>
                         <option value="pending" {% if reservation.status == 'pending' %}selected{% endif %}>Pending</option>
                         <option value="approved" {% if reservation.status == 'approved' %}selected{% endif %}>Approved</option>
+                        <option value="completed" {% if reservation.status == 'completed' %}selected{% endif %}>completed</option>
                     </select>
                     <button type="submit" class="btn btn-dash btn-success">Save</button>
                 </form>

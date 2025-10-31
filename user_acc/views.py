@@ -115,7 +115,7 @@ def viewer_homepage(request):
 
     vehicles = Vehicle.objects.filter(is_active=True, kyc_approved=True)
     reservations= Reservation.objects.filter(user=request.user)
-
+    
     return render(
         request,
         'user_acc/viewer_homepage.html',
